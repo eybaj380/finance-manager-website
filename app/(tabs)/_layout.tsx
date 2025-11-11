@@ -25,7 +25,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="budget_tracker"
         options={{
           title: 'Budget Tracker',
           tabBarIcon: ({color}) => <MaterialCommunityIcons name="bullseye-arrow" size={24} color={color} />,
