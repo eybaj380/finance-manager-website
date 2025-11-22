@@ -1,15 +1,16 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import SimpleBarChart from '@/components/ui/simple-bar-chart';
 import React, { useMemo, useState } from 'react';
 import {
-  Alert,
-  FlatList,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    FlatList,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 type Category = { id: string; name: string; planned: number; spent: number };
@@ -33,6 +34,7 @@ export default function BudgetTrackerScreen() {
     setCatName('');
     setCatPlanned('');
     setCatSpent('');
+    return true;
   }
 
   function removeCategory(id: string) {
@@ -118,8 +120,17 @@ export default function BudgetTrackerScreen() {
           style={styles.input}
         />
 
-        <TouchableOpacity onPress={addCategory} style={styles.addButton}>
-          <ThemedText type="defaultSemiBold">Add Category</ThemedText>
+        <TouchableOpacity
+          onPress={() => {
+            const ok = addCategory();
+            if (ok) Alert.alert('Category added', 'Category added successfully');
+          }}
+          style={styles.addButton}
+          accessibilityRole="button"
+        >
+          <ThemedText type="defaultSemiBold" style={styles.addButtonText}>
+            Add Category
+          </ThemedText>
         </TouchableOpacity>
 
         <ThemedText type="subtitle" style={{ marginTop: 16 }}>
@@ -149,6 +160,19 @@ export default function BudgetTrackerScreen() {
                 </TouchableOpacity>
               </View>
             )}
+          />
+        )}
+
+        {/* Chart */}
+        <ThemedText type="subtitle" style={{ marginTop: 18 }}>
+          Charts
+        </ThemedText>
+
+        {categories.length === 0 ? (
+          <ThemedText style={{ marginTop: 8 }}>Add categories to see charts.</ThemedText>
+        ) : (
+          <SimpleBarChart
+            data={categories.map((c) => ({ label: c.name, planned: c.planned, spent: c.spent }))}
           />
         )}
 
@@ -210,14 +234,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
-    backgroundColor: '#e6e6e6',
+    backgroundColor: '#4b9df8',
+  },
+  addButtonText: {
+    color: '#ffffff',
   },
   catRow: {
     flexDirection: 'row',
     gap: 12,
     padding: 10,
     borderRadius: 6,
-    backgroundColor: '#f6f6f6',
+    backgroundColor: Platform.select({ web: '#262626', default: '#2a2a2a' }),
     marginBottom: 8,
   },
   removeBtn: {
@@ -227,6 +254,9 @@ const styles = StyleSheet.create({
   payload: {
     marginTop: 8,
     fontFamily: Platform.select({ web: 'monospace', default: undefined }),
-    backgroundColor: '#fff0',
+    backgroundColor: 'transparent',
+    color: '#ffffff',
+    padding: 8,
+    borderRadius: 6,
   },
 });
