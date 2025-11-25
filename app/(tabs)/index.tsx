@@ -6,23 +6,36 @@ import UserAvatar from '../../assets/images/user-avatar.svg';
 import { InputField } from '../../components/input-field';
 
 export default function HomeScreen() {
-  const [income, setIncome] = useState('');
-  const [expenses, setExpenses] = useState('');
-  //change to be an array of strings
+  const [wage, setWage] = useState('');
+  const [salary, setSalary] = useState('');
+  const [expenses, setExpenses] = useState(''); //TODO: change expenses to be an object array
   const [expenseLabel, setExpenseLabel] = useState('');
   const [isMessageDismissed, setIsMessageDismissed] = useState(false);
   const [isInputSaved, setIsInputSaved] = useState(false);
 
-  const handleSave = () => {
-    console.log('Income: ', income);
-    console.log('Expense recorded: ', expenses);
-    console.log('Description: ', expenseLabel);
+  const handleSubmit = () => {
+    //input data type validation
+    let regex = new RegExp("^(\$)?(([1-9]\d{0,2}(\,\d{3})*)|([1-9]\d*)|(0))(\.\d{2})?$"); //validating US dollars, including zero dollars
+    if (regex.test(wage && salary && expenses) === true) { //both income & expenses must match data type
+      return wage && salary && expenses;
+    } 
+    if (regex.test(wage || salary || expenses) === false) { //if either income or expenses are not the correct data type, show user message
+      alert('Error - Input field must contain monetary amount.');
+    }
 
-    alert(`Data saved: \nIncome - ${income}\nExpenses - ${expenses}\nDescription - ${expenseLabel}`); 
-
-    setIncome('');
-    setExpenses('');
-  };
+    //make all input fields required
+    if(expenses.trim() === '' || expenseLabel.trim() === '') {
+      alert('Error - Input fields cannot be empty.');
+    } 
+    else {
+      alert(`Data saved: \nIncome - ${wage}\nExpenses - ${expenses}\nDescription - ${expenseLabel}`); 
+      setWage('');
+      setSalary('');
+      setExpenses('');
+      setExpenseLabel('');
+      setIsInputSaved(true);
+    }
+  }; 
 
   return (
       <View style={styles.container}>
@@ -30,25 +43,26 @@ export default function HomeScreen() {
         <View style={styles.inputForm}>
           <Text style={styles.title}>Hello, User!</Text>
           <ScrollView>
+            <Text style={styles.header}>Income (only enter one field)</Text>
             <InputField 
               label="Hourly Wage"
-              placeholder="Enter a dollar amount..."
-              value={income}
-              onChangeText={setIncome}
+              placeholder="$0.00..."
+              value={wage}
+              onChangeText={setWage}
+              editable={!salary}
             />
             <InputField 
               label="Salary"
-              placeholder="Enter a dollar amount..."
-              value={income}
-              onChangeText={setIncome}
+              placeholder="$0.00..."
+              value={salary}
+              onChangeText={setSalary}
+              editable={!wage}
             /> 
-            {/* only accept either hourly wage OR salary for income */}
-            {/* need to change form types to only accept currency type */}
             <View>
               <InputField 
                 label="Expense"
                 isButtonPresent={true}
-                placeholder="Enter a dollar amount..."
+                placeholder="$0.00..."
                 value={expenses}
                 onChangeText={setExpenses}
               />
@@ -58,7 +72,7 @@ export default function HomeScreen() {
                 onChangeText={setExpenseLabel}
               />
             </View>
-            <Pressable style={styles.buttonContainer} onPress={handleSave}>
+            <Pressable style={styles.buttonContainer} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Submit</Text>
             </Pressable>
           </ScrollView>
@@ -103,6 +117,13 @@ const styles = StyleSheet.create({
   fontWeight: '500',
   fontFamily: 'AlikeAngular-Regular',
   marginBottom: 24,
+ },
+ header: {
+  flex: 1,
+  fontFamily: 'AlikeAngular-Regular',
+  fontSize: 25,
+  marginBottom: 10,
+  color: '#4fa428ff',
  },
  inputForm: {
   flexDirection: 'column',

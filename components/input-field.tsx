@@ -1,19 +1,21 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Image, Pressable, StyleProp, StyleSheet, Text, TextInput, TextStyle, View } from 'react-native';
 
-type InputFieldProps = {
+export type InputFieldProps = {
   label?: string;
   isButtonPresent?: boolean;
   //this button is used to generate more expenses inside the scrollview
   placeholder: string;
   value: string;
-  onChangeText: Dispatch<SetStateAction<string>>;
+  onChangeText: Dispatch<SetStateAction<string>>; 
   style?: StyleProp<TextStyle>;
+  editable?: boolean;
 };
 
-const addNewExpense = ({placeholder, onChangeText, ...restProps}: InputFieldProps) => {
-  console.log('Add expense button was pressed.');
-  return (
+export const InputField = ({ label, isButtonPresent, placeholder, value, onChangeText, style, editable, ...restProps}: InputFieldProps) => {
+  const addNewExpense = () => {
+    console.log('Add expense button was pressed.');
+    return (
       <View style={styles.container}>
         <TextInput
           style={styles.input}
@@ -28,27 +30,27 @@ const addNewExpense = ({placeholder, onChangeText, ...restProps}: InputFieldProp
           {...restProps} 
         />
       </View>
-  );
+    );
 };
 
-export const InputField = ({ label, isButtonPresent, placeholder, value, onChangeText, style, ...restProps}: InputFieldProps) => {
-      return (
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            {label && <Text style={styles.label}>{label}</Text>}
-            {isButtonPresent && 
-              (<Pressable onPress={() => {addNewExpense({placeholder, value, onChangeText, ...restProps})}}>
-                <Image source={require('../assets/images/plus_button.svg')} style={styles.plusButtonContainer}/>
-              </Pressable>)} 
-          </View>
-          <TextInput
-            style={[styles.input, style]}
-            placeholder={placeholder}
-            onChangeText={onChangeText}
-            {...restProps} //Pass through any other native TextInput props
-          />
-        </View>
-      );
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        {label && <Text style={styles.label}>{label}</Text>}
+        {isButtonPresent && 
+          (<Pressable onPress={() => {addNewExpense()}}>
+            <Image source={require('../assets/images/plus_button.svg')} style={styles.plusButtonContainer}/>
+          </Pressable>)} 
+      </View>
+      <TextInput
+        style={[styles.input, style]}
+        placeholder={placeholder}
+        onChangeText={onChangeText}
+        editable={editable}
+        {...restProps} //Pass through any other native TextInput props
+      />
+    </View>
+  );
 };
 
  const styles = StyleSheet.create({
