@@ -31,6 +31,20 @@ export default function TabLayout() {
           tabBarIcon: ({color}) => <MaterialCommunityIcons name="bullseye-arrow" size={24} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="savings"
+        options={{
+          title: 'Savings',
+          tabBarIcon: ({ color }) => <IconSymbol size={26} name="piggy-bank" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="timeline"
+        options={{
+          title: 'Budget Timeline',
+          tabBarIcon: ({ color }) => <IconSymbol size={26} name="timeline" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
