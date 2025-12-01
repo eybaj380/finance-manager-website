@@ -44,16 +44,16 @@ export default function SavingsPage() {
         <ThemedText type="title">Savings Page</ThemedText>
 
         <ThemedText style={styles.label}>Budget Title</ThemedText>
-        <TextInput value={form.title} onChangeText={(t) => setForm({ ...form, title: t })} style={styles.input} />
+        <TextInput value={form.title} onChangeText={(t) => setForm({ ...form, title: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
         <ThemedText style={styles.label}>Start Date (YYYY-MM-DD)</ThemedText>
-        <TextInput value={form.startDate} onChangeText={(t) => setForm({ ...form, startDate: t })} style={styles.input} />
+        <TextInput value={form.startDate} onChangeText={(t) => setForm({ ...form, startDate: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
         <ThemedText style={styles.label}>End Date (YYYY-MM-DD)</ThemedText>
-        <TextInput value={form.endDate} onChangeText={(t) => setForm({ ...form, endDate: t })} style={styles.input} />
+        <TextInput value={form.endDate} onChangeText={(t) => setForm({ ...form, endDate: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
         <ThemedText style={styles.label}>Amount</ThemedText>
-        <TextInput keyboardType="numeric" value={form.amount} onChangeText={(t) => setForm({ ...form, amount: t })} style={styles.input} />
+        <TextInput keyboardType="numeric" value={form.amount} onChangeText={(t) => setForm({ ...form, amount: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
         <TouchableOpacity style={styles.button} onPress={validateAndSubmit}>
           <ThemedText type="defaultSemiBold" style={styles.buttonText}>Submit Budget</ThemedText>
@@ -63,18 +63,36 @@ export default function SavingsPage() {
         {submissions.length === 0 ? (
           <ThemedText style={{ marginTop: 8 }}>No data present</ThemedText>
         ) : (
-          submissions.map((s, i) => (
-            <View
-              key={String(i)}
-              style={[
-                styles.subRow,
-                { backgroundColor: colorScheme === 'dark' ? '#222' : styles.subRow.backgroundColor },
-              ]}
-            >
-              <ThemedText type="defaultSemiBold">{s.title}</ThemedText>
-              <ThemedText>{s.startDate} → {s.endDate} • ${s.amount || '0'}</ThemedText>
-            </View>
-          ))
+          submissions.map((s, i) => {
+            // compute monthly saving required to reach goal between dates
+            const parseAmount = (a: string) => {
+              if (!a) return 0;
+              const cleaned = String(a).replace(/[^0-9.\-]/g, '').trim();
+              const n = Number(cleaned);
+              return Number.isFinite(n) ? n : 0;
+            };
+
+            const amt = parseAmount(s.amount);
+            const sd = new Date(s.startDate);
+            const ed = new Date(s.endDate);
+            const diffDays = Math.max(1, Math.round((ed.getTime() - sd.getTime()) / (1000 * 60 * 60 * 24)));
+            const months = Math.max(1, diffDays / 30);
+            const perMonth = +(amt / months).toFixed(2);
+
+            return (
+              <View
+                key={String(i)}
+                style={[
+                  styles.subRow,
+                  { backgroundColor: colorScheme === 'dark' ? '#222' : styles.subRow.backgroundColor },
+                ]}
+              >
+                <ThemedText type="defaultSemiBold">{s.title}</ThemedText>
+                <ThemedText>{s.startDate} → {s.endDate} • ${s.amount || '0'}</ThemedText>
+                <ThemedText style={{ marginTop: 6 }}>Save ${perMonth.toFixed(2)} per month to reach this goal</ThemedText>
+              </View>
+            );
+          })
         )}
       </ScrollView>
     </ThemedView>
@@ -85,7 +103,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 16 },
   label: { marginTop: 8 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginTop: 6 },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginTop: 6, color: '#ffffff' },
   button: { marginTop: 12, padding: 10, borderRadius: 8, backgroundColor: '#4b9df8', alignItems: 'center' },
   buttonText: { color: '#fff' },
   subRow: { padding: 8, borderRadius: 6, backgroundColor: '#f2f2f2', marginTop: 8 },

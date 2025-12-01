@@ -49,10 +49,6 @@ export default function BudgetTrackerScreen() {
     return { totalPlanned, totalSpent, income: inc, remaining };
   }, [categories, income]);
 
-  const payload = useMemo(() => {
-    return JSON.stringify({ income: totals.income, categories }, null, 2);
-  }, [totals.income, categories]);
-
   const [serverResult, setServerResult] = useState<string | null>(null);
   const [loadingServer, setLoadingServer] = useState(false);
 
@@ -93,6 +89,7 @@ export default function BudgetTrackerScreen() {
           onChangeText={setIncome}
           placeholder="0.00"
           style={styles.input}
+          placeholderTextColor="#9a9a9a"
         />
 
         <ThemedText type="subtitle" style={{ marginTop: 12 }}>
@@ -109,6 +106,7 @@ export default function BudgetTrackerScreen() {
           onChangeText={setCatPlanned}
           placeholder="0.00"
           style={styles.input}
+          placeholderTextColor="#9a9a9a"
         />
 
         <ThemedText style={styles.label}>Already Spent</ThemedText>
@@ -118,6 +116,7 @@ export default function BudgetTrackerScreen() {
           onChangeText={setCatSpent}
           placeholder="0.00"
           style={styles.input}
+          placeholderTextColor="#9a9a9a"
         />
 
         <TouchableOpacity
@@ -184,11 +183,6 @@ export default function BudgetTrackerScreen() {
         <ThemedText>Income: ${totals.income.toFixed(2)}</ThemedText>
         <ThemedText>Remaining (Income - Spent): ${totals.remaining.toFixed(2)}</ThemedText>
 
-        <ThemedText type="subtitle" style={{ marginTop: 18 }}>
-          QR-ready Payload
-        </ThemedText>
-        <ThemedText style={styles.payload}>{payload}</ThemedText>
-
         <TouchableOpacity onPress={calculateOnServer} style={[styles.addButton, { marginTop: 12 }]}> 
           <ThemedText type="defaultSemiBold">{loadingServer ? 'Calculating...' : 'Calculate (server)'}</ThemedText>
         </TouchableOpacity>
@@ -201,12 +195,6 @@ export default function BudgetTrackerScreen() {
             <ThemedText style={styles.payload}>{serverResult}</ThemedText>
           </>
         )}
-
-        <ThemedText style={{ marginTop: 12 }}>
-          The JSON above is ready to be encoded as a QR code. If you want me to add an in-app
-          QR generator (so the app shows the QR image), I can add that — it requires a small
-          dependency like <ThemedText type="defaultSemiBold">react-native-qrcode-svg</ThemedText>.
-        </ThemedText>
       </ScrollView>
     </ThemedView>
   );
@@ -227,6 +215,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 6,
     padding: Platform.select({ web: 8, default: 10 }),
+    color: '#ffffff',
     marginTop: 6,
   },
   addButton: {

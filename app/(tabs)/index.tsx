@@ -12,30 +12,81 @@ export default function HomeScreen() {
   const [expenseLabel, setExpenseLabel] = useState('');
   const [isMessageDismissed, setIsMessageDismissed] = useState(false);
   const [isInputSaved, setIsInputSaved] = useState(false);
+  const [report, setReport] = useState<any | null>(null);
+  const [loadingReport, setLoadingReport] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const handleSubmit = () => {
-    //input data type validation
-    let regex = new RegExp("^(\$)?(([1-9]\d{0,2}(\,\d{3})*)|([1-9]\d*)|(0))(\.\d{2})?$"); //validating US dollars, including zero dollars
-    if (regex.test(wage && salary && expenses) === true) { //both income & expenses must match data type
-      return wage && salary && expenses;
-    } 
-    if (regex.test(wage || salary || expenses) === false) { //if either income or expenses are not the correct data type, show user message
-      alert('Error - Input field must contain monetary amount.');
+    // parse monetary inputs like "$1,000.00" or "1000"
+    const parseMoney = (s: string) => {
+      if (!s) return NaN;
+      const cleaned = String(s).replace(/[^0-9.\-]/g, '').trim();
+      if (cleaned === '') return NaN;
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : NaN;
+    };
+
+    const wageVal = parseMoney(wage);
+    const salaryVal = parseMoney(salary);
+    const expenseVal = parseMoney(expenses);
+
+    // require exactly one income field (hourly wage OR salary)
+    if ((Number.isNaN(wageVal) || wageVal <= 0) && (Number.isNaN(salaryVal) || salaryVal <= 0)) {
+      alert('Please enter either an hourly wage or a salary (a positive number).');
+      return;
+    }
+    if (wage && salary) {
+      alert('Please enter only one of Hourly Wage or Salary, not both.');
+      return;
     }
 
-    //make all input fields required
-    if(expenses.trim() === '' || expenseLabel.trim() === '') {
-      alert('Error - Input fields cannot be empty.');
-    } 
-    else {
-      alert(`Data saved: \nIncome - ${wage}\nExpenses - ${expenses}\nDescription - ${expenseLabel}`); 
-      setWage('');
-      setSalary('');
-      setExpenses('');
-      setExpenseLabel('');
-      setIsInputSaved(true);
+    // validate expense
+    if (Number.isNaN(expenseVal) || expenseVal <= 0) {
+      alert('Please enter a valid expense amount (e.g. 10.00 or $10.00).');
+      return;
     }
-  }; 
+
+    if (!expenseLabel || expenseLabel.trim() === '') {
+      alert('Please enter a description for the expense.');
+      return;
+    }
+
+    // build payload for backend
+    const payload: any = { expenses: [{ name: expenseLabel.trim(), amount: Number(expenseVal) }] };
+    if (salaryVal && !Number.isNaN(salaryVal) && salaryVal > 0) payload.salary_monthly = salaryVal;
+    else if (wageVal && !Number.isNaN(wageVal) && wageVal > 0) payload.hourly_rate = wageVal;
+
+    // send to backend and render report
+    setLoadingReport(true);
+    setReportError(null);
+    fetch('http://127.0.0.1:8000/financial-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(async (r) => {
+        if (!r.ok) {
+          const txt = await r.text();
+          throw new Error(`${r.status}: ${txt}`);
+        }
+        return r.json();
+      })
+      .then((data) => {
+        setReport(data);
+        setIsInputSaved(true);
+        // clear inputs
+        setWage('');
+        setSalary('');
+        setExpenses('');
+        setExpenseLabel('');
+      })
+      .catch((err) => {
+        console.error('Report error', err);
+        setReportError(String(err.message ?? err));
+        alert('Unable to fetch report: ' + String(err.message ?? err));
+      })
+      .finally(() => setLoadingReport(false));
+  };
 
   return (
       <View style={styles.container}>
@@ -49,6 +100,7 @@ export default function HomeScreen() {
               placeholder="$0.00..."
               value={wage}
               onChangeText={setWage}
+              keyboardType="numeric"
               editable={!salary}
             />
             <InputField 
@@ -56,6 +108,7 @@ export default function HomeScreen() {
               placeholder="$0.00..."
               value={salary}
               onChangeText={setSalary}
+              keyboardType="numeric"
               editable={!wage}
             /> 
             <View>
@@ -65,6 +118,7 @@ export default function HomeScreen() {
                 placeholder="$0.00..."
                 value={expenses}
                 onChangeText={setExpenses}
+                keyboardType="numeric"
               />
               <InputField 
                 placeholder="Description..."
@@ -91,7 +145,31 @@ export default function HomeScreen() {
           ) : null}
           <View style={styles.financeReportContainer}>
             <Text style={[styles.title, {textAlign: 'center'}]}>Financial Report</Text>
-            {!isInputSaved ? (<Text style={styles.noData}>No financial goals set or data given. Please submit income and expenses to generate the report.</Text>) : null}
+            {loadingReport ? (
+              <Text style={styles.noData}>Generating report…</Text>
+            ) : reportError ? (
+              <Text style={styles.noData}>Error: {reportError}</Text>
+            ) : !isInputSaved || !report ? (
+              <Text style={styles.noData}>No financial goals set or data given. Please submit income and expenses to generate the report.</Text>
+            ) : (
+              // render report
+              <View style={{ marginTop: 8 }}>
+                <Text style={{ fontWeight: '600' }}>Gross Monthly: ${report.gross_monthly.toFixed(2)}</Text>
+                <Text>Total Expenses: ${report.total_expenses.toFixed(2)}</Text>
+                <Text>Net Monthly: ${report.net_monthly.toFixed(2)}</Text>
+                <Text>Savings Rate: {report.savings_rate_pct}%</Text>
+                <Text style={{ marginTop: 8, fontWeight: '600' }}>Expenses</Text>
+                {Array.isArray(report.expenses) && report.expenses.length ? (
+                  report.expenses.map((e: any, i: number) => (
+                    <View key={i} style={{ marginTop: 6 }}>
+                      <Text>{e.name}: ${Number(e.amount).toFixed(2)}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={{ marginTop: 6 }}>No expenses listed.</Text>
+                )}
+              </View>
+            )}
           </View>
         </View>
       </View>
