@@ -34,14 +34,14 @@ export default function TabLayout() {
         name="savings"
         options={{
           title: 'Savings',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="piggy-bank" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={26} name='0.square' color={color} />,
         }}
       />
       <Tabs.Screen
         name="timeline"
         options={{
           title: 'Budget Timeline',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="timeline" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={26} name='0.square' color={color} />,
         }}
       />
     </Tabs>
