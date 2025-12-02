@@ -1,17 +1,6 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import SimpleBarChart from '@/components/ui/simple-bar-chart';
 import React, { useMemo, useState } from 'react';
-import {
-    Alert,
-    FlatList,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Alert, FlatList, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type Category = { id: string; name: string; planned: number; spent: number };
 
@@ -78,11 +67,10 @@ export default function BudgetTrackerScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <ThemedText type="title">Budget Planner</ThemedText>
+        <Text>Budget Planner</Text>
 
-        <ThemedText style={styles.label}>Monthly Income</ThemedText>
+        <Text style={styles.label}>Monthly Income</Text>
         <TextInput
           keyboardType="numeric"
           value={income}
@@ -92,14 +80,14 @@ export default function BudgetTrackerScreen() {
           placeholderTextColor="#9a9a9a"
         />
 
-        <ThemedText type="subtitle" style={{ marginTop: 12 }}>
+        <Text style={{ marginTop: 12 }}>
           Add Category
-        </ThemedText>
+        </Text>
 
-        <ThemedText style={styles.label}>Name</ThemedText>
+        <Text style={styles.label}>Name</Text>
         <TextInput value={catName} onChangeText={setCatName} placeholder="Groceries" style={styles.input} />
 
-        <ThemedText style={styles.label}>Planned Amount</ThemedText>
+        <Text style={styles.label}>Planned Amount</Text>
         <TextInput
           keyboardType="numeric"
           value={catPlanned}
@@ -109,7 +97,7 @@ export default function BudgetTrackerScreen() {
           placeholderTextColor="#9a9a9a"
         />
 
-        <ThemedText style={styles.label}>Already Spent</ThemedText>
+        <Text style={styles.label}>Already Spent</Text>
         <TextInput
           keyboardType="numeric"
           value={catSpent}
@@ -127,17 +115,17 @@ export default function BudgetTrackerScreen() {
           style={styles.addButton}
           accessibilityRole="button"
         >
-          <ThemedText type="defaultSemiBold" style={styles.addButtonText}>
+          <Text style={styles.addButtonText}>
             Add Category
-          </ThemedText>
+          </Text>
         </TouchableOpacity>
 
-        <ThemedText type="subtitle" style={{ marginTop: 16 }}>
+        <Text  style={{ marginTop: 16 }}>
           Categories
-        </ThemedText>
+        </Text>
 
         {categories.length === 0 ? (
-          <ThemedText style={{ marginTop: 8 }}>No categories yet. Add one above.</ThemedText>
+          <Text style={{ marginTop: 8 }}>No categories yet. Add one above.</Text>
         ) : (
           <FlatList
             data={categories}
@@ -146,16 +134,16 @@ export default function BudgetTrackerScreen() {
             renderItem={({ item }) => (
               <View style={styles.catRow}>
                 <View style={{ flex: 1 }}>
-                  <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
-                  <ThemedText>Planned: ${item.planned.toFixed(2)}</ThemedText>
-                  <ThemedText>Spent: ${item.spent.toFixed(2)}</ThemedText>
-                  <ThemedText>
+                  <Text>{item.name}</Text>
+                  <Text>Planned: ${item.planned.toFixed(2)}</Text>
+                  <Text>Spent: ${item.spent.toFixed(2)}</Text>
+                  <Text>
                     Remaining: ${(item.planned - item.spent).toFixed(2)} ({
                     item.planned > 0 ? ((item.spent / item.planned) * 100).toFixed(0) : '0'}%)
-                  </ThemedText>
+                  </Text>
                 </View>
                 <TouchableOpacity onPress={() => removeCategory(item.id)} style={styles.removeBtn}>
-                  <ThemedText>Remove</ThemedText>
+                  <Text>Remove</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -163,40 +151,39 @@ export default function BudgetTrackerScreen() {
         )}
 
         {/* Chart */}
-        <ThemedText type="subtitle" style={{ marginTop: 18 }}>
+        <Text style={{ marginTop: 18 }}>
           Charts
-        </ThemedText>
+        </Text>
 
         {categories.length === 0 ? (
-          <ThemedText style={{ marginTop: 8 }}>Add categories to see charts.</ThemedText>
+          <Text style={{ marginTop: 8 }}>Add categories to see charts.</Text>
         ) : (
           <SimpleBarChart
             data={categories.map((c) => ({ label: c.name, planned: c.planned, spent: c.spent }))}
           />
         )}
 
-        <ThemedText type="subtitle" style={{ marginTop: 18 }}>
+        <Text style={{ marginTop: 18 }}>
           Summary
-        </ThemedText>
-        <ThemedText>Total Planned: ${totals.totalPlanned.toFixed(2)}</ThemedText>
-        <ThemedText>Total Spent: ${totals.totalSpent.toFixed(2)}</ThemedText>
-        <ThemedText>Income: ${totals.income.toFixed(2)}</ThemedText>
-        <ThemedText>Remaining (Income - Spent): ${totals.remaining.toFixed(2)}</ThemedText>
+        </Text>
+        <Text>Total Planned: ${totals.totalPlanned.toFixed(2)}</Text>
+        <Text>Total Spent: ${totals.totalSpent.toFixed(2)}</Text>
+        <Text>Income: ${totals.income.toFixed(2)}</Text>
+        <Text>Remaining (Income - Spent): ${totals.remaining.toFixed(2)}</Text>
 
         <TouchableOpacity onPress={calculateOnServer} style={[styles.addButton, { marginTop: 12 }]}> 
-          <ThemedText type="defaultSemiBold">{loadingServer ? 'Calculating...' : 'Calculate (server)'}</ThemedText>
+          <Text>{loadingServer ? 'Calculating...' : 'Calculate (server)'}</Text>
         </TouchableOpacity>
 
         {serverResult && (
           <>
-            <ThemedText type="subtitle" style={{ marginTop: 12 }}>
+            <Text style={{ marginTop: 12 }}>
               Server Result
-            </ThemedText>
-            <ThemedText style={styles.payload}>{serverResult}</ThemedText>
+            </Text>
+            <Text style={styles.payload}>{serverResult}</Text>
           </>
         )}
       </ScrollView>
-    </ThemedView>
   );
 }
 

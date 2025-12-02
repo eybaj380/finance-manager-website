@@ -100,7 +100,6 @@ export default function HomeScreen() {
               placeholder="$0.00..."
               value={wage}
               onChangeText={setWage}
-              keyboardType="numeric"
               editable={!salary}
             />
             <InputField 
@@ -108,7 +107,6 @@ export default function HomeScreen() {
               placeholder="$0.00..."
               value={salary}
               onChangeText={setSalary}
-              keyboardType="numeric"
               editable={!wage}
             /> 
             <View>
@@ -118,7 +116,6 @@ export default function HomeScreen() {
                 placeholder="$0.00..."
                 value={expenses}
                 onChangeText={setExpenses}
-                keyboardType="numeric"
               />
               <InputField 
                 placeholder="Description..."
