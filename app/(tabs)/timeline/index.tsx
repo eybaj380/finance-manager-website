@@ -1,8 +1,6 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import TimelinePin from '@/components/ui/timeline-pin';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function TimelinePage() {
   const [pins, setPins] = useState<{ date: string; amount: number; note?: string }[]>([]);
@@ -24,27 +22,27 @@ export default function TimelinePage() {
   const split = goal ? (goal / 5) : 0;
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <ThemedText type="title">Budget Timeline</ThemedText>
+        <Text>Budget Timeline</Text>
 
-        <ThemedText style={styles.label}>Savings Goal</ThemedText>
+        <Text style={styles.label}>Savings Goal</Text>
         <TextInput value={savingsGoal} onChangeText={setSavingsGoal} keyboardType="numeric" style={styles.input} placeholder="0.00" placeholderTextColor="#9a9a9a" />
-        <ThemedText>Split into 5: ${split.toFixed(2)}</ThemedText>
+        <Text>Split into 5: ${split.toFixed(2)}</Text>
 
-        <ThemedText type="subtitle" style={{ marginTop: 12 }}>Add Pin</ThemedText>
-        <ThemedText style={styles.label}>Date (YYYY-MM-DD)</ThemedText>
+        <Text style={{ marginTop: 12 }}>Add Pin</Text>
+        <Text style={styles.label}>Date (YYYY-MM-DD)</Text>
         <TextInput value={date} onChangeText={setDate} style={styles.input} placeholderTextColor="#9a9a9a" />
-        <ThemedText style={styles.label}>Amount</ThemedText>
+        <Text style={styles.label}>Amount</Text>
         <TextInput value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.input} placeholderTextColor="#9a9a9a" />
-        <ThemedText style={styles.label}>Note</ThemedText>
+        <Text style={styles.label}>Note</Text>
         <TextInput value={note} onChangeText={setNote} style={styles.input} placeholderTextColor="#9a9a9a" />
-        <TouchableOpacity style={styles.button} onPress={addPin}><ThemedText type="defaultSemiBold" style={styles.buttonText}>Pin</ThemedText></TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={addPin}><Text style={styles.buttonText}>Pin</Text></TouchableOpacity>
 
-        <ThemedText type="subtitle" style={{ marginTop: 18 }}>Timeline</ThemedText>
-        {pins.length === 0 ? <ThemedText style={{ marginTop: 8 }}>No pins yet.</ThemedText> : pins.map((p, i) => <TimelinePin key={String(i)} date={p.date} amount={p.amount} note={p.note} />)}
+        <Text style={{ marginTop: 18 }}>Timeline</Text>
+        {pins.length === 0 ? <Text style={{ marginTop: 8 }}>No pins yet.</Text> : pins.map((p, i) => <TimelinePin key={String(i)} date={p.date} amount={p.amount} note={p.note} />)}
       </ScrollView>
-    </ThemedView>
+    </View>
   );
 }
 

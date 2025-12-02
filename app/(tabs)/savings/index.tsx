@@ -1,8 +1,6 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type SavingsForm = {
   title: string;
@@ -39,29 +37,29 @@ export default function SavingsPage() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <ThemedText type="title">Savings Page</ThemedText>
+        <Text>Savings Page</Text>
 
-        <ThemedText style={styles.label}>Budget Title</ThemedText>
+        <Text style={styles.label}>Budget Title</Text>
         <TextInput value={form.title} onChangeText={(t) => setForm({ ...form, title: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
-        <ThemedText style={styles.label}>Start Date (YYYY-MM-DD)</ThemedText>
+        <Text style={styles.label}>Start Date (YYYY-MM-DD)</Text>
         <TextInput value={form.startDate} onChangeText={(t) => setForm({ ...form, startDate: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
-        <ThemedText style={styles.label}>End Date (YYYY-MM-DD)</ThemedText>
+        <Text style={styles.label}>End Date (YYYY-MM-DD)</Text>
         <TextInput value={form.endDate} onChangeText={(t) => setForm({ ...form, endDate: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
-        <ThemedText style={styles.label}>Amount</ThemedText>
+        <Text style={styles.label}>Amount</Text>
         <TextInput keyboardType="numeric" value={form.amount} onChangeText={(t) => setForm({ ...form, amount: t })} style={styles.input} placeholderTextColor="#9a9a9a" />
 
         <TouchableOpacity style={styles.button} onPress={validateAndSubmit}>
-          <ThemedText type="defaultSemiBold" style={styles.buttonText}>Submit Budget</ThemedText>
+          <Text style={styles.buttonText}>Submit Budget</Text>
         </TouchableOpacity>
 
-        <ThemedText type="subtitle" style={{ marginTop: 18 }}>Analytics</ThemedText>
+        <Text style={{ marginTop: 18 }}>Analytics</Text>
         {submissions.length === 0 ? (
-          <ThemedText style={{ marginTop: 8 }}>No data present</ThemedText>
+          <Text style={{ marginTop: 8 }}>No data present</Text>
         ) : (
           submissions.map((s, i) => {
             // compute monthly saving required to reach goal between dates
@@ -87,15 +85,15 @@ export default function SavingsPage() {
                   { backgroundColor: colorScheme === 'dark' ? '#222' : styles.subRow.backgroundColor },
                 ]}
               >
-                <ThemedText type="defaultSemiBold">{s.title}</ThemedText>
-                <ThemedText>{s.startDate} → {s.endDate} • ${s.amount || '0'}</ThemedText>
-                <ThemedText style={{ marginTop: 6 }}>Save ${perMonth.toFixed(2)} per month to reach this goal</ThemedText>
+                <Text>{s.title}</Text>
+                <Text>{s.startDate} → {s.endDate} • ${s.amount || '0'}</Text>
+                <Text style={{ marginTop: 6 }}>Save ${perMonth.toFixed(2)} per month to reach this goal</Text>
               </View>
             );
           })
         )}
       </ScrollView>
-    </ThemedView>
+    </View>
   );
 }
 
